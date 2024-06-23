@@ -2,14 +2,11 @@ from fastapi import FastAPI, Request, Response, status
 from fastapi.middleware.cors import CORSMiddleware
 import uvicorn
 import requests, json
-from base64 import b64decode
 from dotenv import dotenv_values
 config = dotenv_values(".env")
 
 app = FastAPI()
 app.add_middleware(CORSMiddleware, allow_origins=[config.get("VERCEL_URL")], allow_credentials=True, allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["*"])
-
-passwd = "aaa"
 
 async def get_ips():
     url = config.get("PFSENSE_URL") + "/list/gamuxers"
@@ -46,7 +43,7 @@ async def add_allowed(request: Request, response: Response):
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return {"status": "Invalid Credentials!"}
     
-    if passwd != auth:
+    if config.get("PASSWORD") != auth:
         response.status_code = status.HTTP_401_UNAUTHORIZED
         return {"status": "Invalid Credentials!"}
     
